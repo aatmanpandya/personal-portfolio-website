@@ -19,6 +19,7 @@ export default function NeuralBackground() {
     let nodes = [];
     let edges = [];
     let particles = [];
+    let layerX = [];
     let raf = 0;
     let t = 0;
 
@@ -26,6 +27,12 @@ export default function NeuralBackground() {
     // Smoothed scroll progress 0..1 → position of the activation wavefront.
     let progress = 0;
     let progressTarget = 0;
+
+    // Right-click / tap "key tap": a ripple of pulses relayed through one
+    // layer's nodes, starting from the click point, then forwarded on as particles.
+    const TAP_DURATION_FRAMES = 50;
+    const TAP_STAGGER_FRAMES = 3;
+    let taps = [];
 
     function build() {
       DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -40,10 +47,11 @@ export default function NeuralBackground() {
       nodes = [];
       edges = [];
       particles = [];
+      taps = [];
 
       const padX = W * 0.08;
       const usableW = W - padX * 2;
-      const layerX = LAYERS.map((_, i) =>
+      layerX = LAYERS.map((_, i) =>
         LAYERS.length === 1 ? W / 2 : padX + (usableW * i) / (LAYERS.length - 1)
       );
 
@@ -93,12 +101,48 @@ export default function NeuralBackground() {
     }
 
     function spawnParticles(fx) {
-      // Emit signal along edges whose source is right at the wavefront.
+      // Emit signal along edges whose source is near the wavefront — wide
+      // enough band and high enough odds that the ambient flow actually
+      // reads as a stream of packets, not an occasional blip.
       edges.forEach((e) => {
         const d = Math.abs(e.src.x - fx);
-        if (d < 22 && Math.random() < 0.06 && particles.length < 220) {
+        if (d < 45 && Math.random() < 0.16 && particles.length < 260) {
           particles.push({ e, u: 0, speed: 0.012 + Math.random() * 0.02 });
         }
+      });
+    }
+
+    // Find the layer nearest a click, then schedule a tap pulse on every
+    // node in it, staggered outward from the node closest to the click —
+    // a relay ripple through that layer's column.
+    function triggerLayerTap(clientX, clientY) {
+      if (!nodes.length || !layerX.length) return;
+      let li = 0;
+      let bestX = Infinity;
+      layerX.forEach((x, i) => {
+        const d = Math.abs(x - clientX);
+        if (d < bestX) {
+          bestX = d;
+          li = i;
+        }
+      });
+
+      const layerNodes = nodes.filter((n) => n.layer === li).sort((a, b) => a.by - b.by);
+      if (!layerNodes.length) return;
+
+      let startIdx = 0;
+      let bestY = Infinity;
+      layerNodes.forEach((n, i) => {
+        const d = Math.abs(n.by - clientY);
+        if (d < bestY) {
+          bestY = d;
+          startIdx = i;
+        }
+      });
+
+      layerNodes.forEach((n, i) => {
+        const delay = Math.abs(i - startIdx) * TAP_STAGGER_FRAMES;
+        taps.push({ node: n, startFrame: t + delay, forwarded: false });
       });
     }
 
@@ -154,10 +198,46 @@ export default function NeuralBackground() {
         ctx.stroke();
       }
 
+      // Key-tap ripples: advance each scheduled tap, blend its pulse into
+      // the node it targets, and forward a particle burst at the peak.
+      const tapPulse = new Map();
+      for (let i = taps.length - 1; i >= 0; i--) {
+        const tap = taps[i];
+        const elapsed = t - tap.startFrame;
+        if (elapsed < 0) continue;
+        const tapProgress = Math.min(1, elapsed / TAP_DURATION_FRAMES);
+        const tapGlow = Math.sin(tapProgress * Math.PI);
+        const prev = tapPulse.get(tap.node);
+        if (!prev || tapGlow > prev.glow) tapPulse.set(tap.node, { glow: tapGlow, progress: tapProgress });
+        if (!tap.forwarded && tapProgress >= 0.5) {
+          tap.forwarded = true;
+          edges.forEach((e) => {
+            if (e.src !== tap.node) return;
+            // Fire a small volley per edge, not just one packet, so the
+            // relay reads as an obvious burst rather than a single blip.
+            for (let k = 0; k < 3; k++) {
+              if (particles.length >= 260) break;
+              particles.push({
+                e,
+                u: 0,
+                delay: k * 5,
+                speed: 0.026 + Math.random() * 0.018,
+                hot: true,
+              });
+            }
+          });
+        }
+        if (tapProgress >= 1) taps.splice(i, 1);
+      }
+
       // Signal particles travelling along edges.
       if (!reduced) spawnParticles(fx);
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
+        if (p.delay) {
+          p.delay -= 1;
+          continue;
+        }
         p.u += p.speed;
         if (p.u >= 1) {
           particles.splice(i, 1);
@@ -166,15 +246,30 @@ export default function NeuralBackground() {
         const a = p.e.src, b = p.e.dst;
         const x = a.x + (b.x - a.x) * p.u;
         const y = a.y + (b.y - a.y) * p.u;
-        ctx.beginPath();
-        ctx.arc(x, y, 1.8, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(169,255,207,${0.9 * (1 - p.u)})`;
-        ctx.fill();
+        const fade = 1 - p.u;
+        if (p.hot) {
+          // Bigger, brighter "packet" — a soft glow halo behind a hot core —
+          // so tap-forwarded signal reads as obviously distinct from ambient.
+          ctx.beginPath();
+          ctx.arc(x, y, 7 * fade + 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(169,255,207,${0.4 * fade})`;
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x, y, 2.6, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(224,255,238,${0.95 * fade})`;
+          ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.arc(x, y, 2.3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(169,255,207,${0.95 * fade})`;
+          ctx.fill();
+        }
       }
 
       // Nodes on top.
       for (const nd of nodes) {
-        const glow = nd.act;
+        const tapInfo = tapPulse.get(nd);
+        const glow = Math.max(nd.act, tapInfo ? tapInfo.glow : 0);
         if (glow > 0.15) {
           ctx.beginPath();
           ctx.arc(nd.x, nd.y, nd.r + 6 + glow * 6, 0, Math.PI * 2);
@@ -188,6 +283,29 @@ export default function NeuralBackground() {
         const g = Math.floor(150 + glow * 90);
         ctx.fillStyle = `rgba(${Math.floor(120 + glow * 40)},${g},255,${lit})`;
         ctx.fill();
+      }
+
+      // A distinct flash + expanding double ring per tapped node, on top of
+      // everything — the "key tap" reads unmistakably apart from the
+      // ambient wavefront glow.
+      for (const [node, { glow: tapGlow, progress: tapProgress }] of tapPulse) {
+        if (tapGlow <= 0.02) continue;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r + 10 + tapGlow * 8, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,255,225,${tapGlow * 0.28})`;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r + 3 + tapProgress * 34, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(200,255,225,${tapGlow * 0.85})`;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r + 3 + tapProgress * 20, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(122,180,255,${tapGlow * 0.6})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       }
 
       raf = requestAnimationFrame(draw);
@@ -211,6 +329,29 @@ export default function NeuralBackground() {
       build();
       onScroll();
     }
+    // "Blank" means not an actual interactive control — real content (text,
+    // headings, section backgrounds) still counts as tappable background,
+    // only links/buttons/inputs opt out so their normal behavior survives.
+    function isInteractive(el) {
+      return !!el.closest?.(
+        'a, button, input, textarea, select, [role="button"], [contenteditable="true"]'
+      );
+    }
+    function onContextMenu(e) {
+      if (isInteractive(e.target)) return;
+      e.preventDefault();
+      triggerLayerTap(e.clientX, e.clientY);
+    }
+    // Plain click/tap anywhere non-interactive — covers left-click on
+    // desktop and touch taps (which fire a synthetic "click", not
+    // "contextmenu"). Listens on window (not the canvas) since foreground
+    // content — sections, headings, text — sits above the canvas in the
+    // stacking order and would otherwise swallow the click before it ever
+    // reaches it.
+    function onClick(e) {
+      if (isInteractive(e.target)) return;
+      triggerLayerTap(e.clientX, e.clientY);
+    }
 
     build();
     onScroll();
@@ -218,6 +359,8 @@ export default function NeuralBackground() {
     window.addEventListener("mousemove", onMove, { passive: true });
     window.addEventListener("mouseleave", onLeave);
     window.addEventListener("resize", onResize);
+    window.addEventListener("contextmenu", onContextMenu);
+    window.addEventListener("click", onClick);
     raf = requestAnimationFrame(draw);
 
     return () => {
@@ -226,6 +369,8 @@ export default function NeuralBackground() {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseleave", onLeave);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("click", onClick);
+      window.removeEventListener("contextmenu", onContextMenu);
     };
   }, []);
 
