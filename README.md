@@ -1,14 +1,16 @@
 # Personal Portfolio — "The Forward Pass"
 
-An interactive AI/ML portfolio built around one idea: **the page is a neural
-network, and scrolling is a forward pass through it.** A live, mouse-reactive
-network spans the background; as you scroll, an activation wavefront sweeps
-left→right, lighting up neurons, firing signal along the edges, and revealing
-each section as it reaches that layer. A subtle "loss" value converges toward
-zero as you go.
+An interactive AI/ML portfolio built around one idea: **the site is a neural
+network, and moving through it is a forward pass.** A live, mouse-reactive
+network spans the background; the page you're on sets the activation
+wavefront's base position (Home → Contact = layer 0 → layer 4), and scrolling
+within a page advances it further across that layer's slice. Nodes light up,
+signal particles fire along the edges, and a subtle "loss" value keeps
+converging as you move deeper into the site.
 
-Stack: **React + Vite + Tailwind v4 + Framer Motion.** Canvas network is hand-
-written (no heavy libs) and respects `prefers-reduced-motion`.
+Stack: **React + Vite + Tailwind v4 + Framer Motion + React Router.** Canvas
+network is hand-written (no heavy libs) and respects `prefers-reduced-motion`.
+Pages: `/` `/journey` `/projects` `/skills` `/contact`.
 
 ## Run it
 
@@ -38,15 +40,32 @@ e.g. `resumeUrl: "/resume.pdf"`.
 ```
 src/
   content.js               ← edit this
-  App.jsx                  ← section order
+  routes.js                ← page/route list — single source of truth
+  App.jsx                  ← BrowserRouter + Layout + AnimatedRoutes
   index.css                ← design tokens / theme
+  pages/
+    Home.jsx                ← Hero + layer picker (/)
+    NotFound.jsx             ← 404
   components/
-    NeuralBackground.jsx   ← the live canvas network
-    ScrollHud.jsx          ← progress rail + converging loss
+    Layout.jsx               ← persistent shell: background, HUD, nav
+    AnimatedRoutes.jsx        ← <Routes> + page transitions
+    NeuralBackground.jsx      ← the live canvas network
+    ScrollHud.jsx             ← progress rail + converging loss
+    LayerNav.jsx              ← prev/next layer footer link
+    LayerMenu.jsx             ← Home's grid of links into each layer
     Nav.jsx  Hero.jsx  Journey.jsx  Projects.jsx  Skills.jsx  Contact.jsx
 ```
 
 ## Deploy
 
-It's a static site — after `npm run build`, deploy the `dist/` folder to
-Netlify, Vercel, GitHub Pages, or Cloudflare Pages (drag-and-drop works).
+It's a static SPA — after `npm run build`, deploy the `dist/` folder.
+
+Because routing uses clean URLs (`/projects`, not `/#/projects`), the host
+needs to serve `index.html` for any unmatched path so a direct link or
+refresh on `/projects` doesn't 404:
+
+- **Netlify** — already handled by `public/_redirects`.
+- **Vercel** — already handled by `vercel.json`.
+- **GitHub Pages / other static hosts** — these don't support SPA rewrites
+  out of the box; you'd need the 404.html-redirect workaround or switch to
+  `HashRouter` in `App.jsx`.

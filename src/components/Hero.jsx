@@ -1,13 +1,11 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { profile, links } from "../content.js";
 
 // The "input layer": raw signal enters. Name, title, one sharp line.
 export default function Hero() {
   return (
-    <section
-      id="top"
-      className="relative flex min-h-screen items-center px-6 pt-24"
-    >
+    <section className="relative flex min-h-screen items-center px-6 pt-24">
       <div className="mx-auto w-full max-w-6xl">
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -45,20 +43,20 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="mt-10 flex flex-wrap items-center gap-3"
         >
-          <a
-            href="#projects"
+          <Link
+            to="/projects"
             className="group relative overflow-hidden rounded-full bg-signal px-6 py-3 text-sm font-medium text-ink transition-transform hover:-translate-y-0.5"
           >
             <span className="relative z-10">See the work</span>
             <span className="absolute inset-0 -translate-x-full bg-synapse transition-transform duration-300 group-hover:translate-x-0" />
             <span className="relative z-10 sr-only">projects</span>
-          </a>
-          <a
-            href="#contact"
+          </Link>
+          <Link
+            to="/contact"
             className="rounded-full border border-line px-6 py-3 text-sm font-medium text-fog transition-colors hover:border-signal hover:text-white"
           >
             Get in touch
-          </a>
+          </Link>
           {profile.resumeUrl ? (
             <a
               href={profile.resumeUrl}

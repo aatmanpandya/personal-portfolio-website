@@ -1,11 +1,12 @@
 import { profile, journey } from "../content.js";
 import Reveal from "./Reveal.jsx";
 import LayerTag from "./LayerTag.jsx";
+import LayerNav from "./LayerNav.jsx";
 
 // First hidden layer: the story so far + a short bio.
 export default function Journey() {
   return (
-    <section id="journey" className="relative px-6 py-28">
+    <section className="relative min-h-screen px-6 pb-20 pt-36">
       <div className="mx-auto max-w-6xl">
         <LayerTag index={1} name="origin" />
         <div className="grid gap-14 md:grid-cols-[0.9fr_1.1fr]">
@@ -42,6 +43,7 @@ export default function Journey() {
             </ul>
           </div>
         </div>
+        <LayerNav index={1} />
       </div>
     </section>
   );

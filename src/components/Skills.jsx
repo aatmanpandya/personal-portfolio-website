@@ -1,11 +1,12 @@
 import { skills } from "../content.js";
 import Reveal from "./Reveal.jsx";
 import LayerTag from "./LayerTag.jsx";
+import LayerNav from "./LayerNav.jsx";
 
 // Deeper hidden layer: capabilities, grouped like feature detectors.
 export default function Skills() {
   return (
-    <section id="skills" className="relative px-6 py-28">
+    <section className="relative min-h-screen px-6 pb-20 pt-36">
       <div className="mx-auto max-w-6xl">
         <LayerTag index={3} name="weights" />
         <Reveal>
@@ -33,6 +34,7 @@ export default function Skills() {
             </Reveal>
           ))}
         </div>
+        <LayerNav index={3} />
       </div>
     </section>
   );

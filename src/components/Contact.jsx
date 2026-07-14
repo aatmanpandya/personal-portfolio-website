@@ -1,6 +1,7 @@
 import { profile, links } from "../content.js";
 import Reveal from "./Reveal.jsx";
 import LayerTag from "./LayerTag.jsx";
+import LayerNav from "./LayerNav.jsx";
 
 // Output layer: the prediction. A clear call to connect.
 export default function Contact() {
@@ -13,7 +14,7 @@ export default function Contact() {
   ].filter(Boolean);
 
   return (
-    <section id="contact" className="relative px-6 pb-32 pt-28">
+    <section className="relative min-h-screen px-6 pb-32 pt-36">
       <div className="mx-auto max-w-6xl">
         <LayerTag index={4} name="output" />
         <Reveal>
@@ -66,6 +67,8 @@ export default function Contact() {
             </div>
           </div>
         </Reveal>
+
+        <LayerNav index={4} />
 
         <footer className="mt-10 flex flex-col items-center justify-between gap-2 font-mono text-xs text-muted sm:flex-row">
           <span>

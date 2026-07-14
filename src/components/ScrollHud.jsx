@@ -2,13 +2,20 @@ import { useEffect, useState } from "react";
 
 // Subtle "forward pass" heads-up display: a thin progress rail on the left and a
 // quietly converging loss value. Tasteful hint, not a billboard.
-export default function ScrollHud() {
+//
+// Combines which page you're on (`routeIndex`/`totalRoutes`) with in-page
+// scroll, so the rail/loss keep advancing sensibly across navigations instead
+// of resetting to "high loss" on every page.
+export default function ScrollHud({ routeIndex = 0, totalRoutes = 1 }) {
   const [p, setP] = useState(0);
 
   useEffect(() => {
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setP(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+      const localP = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      const base = routeIndex / totalRoutes;
+      const span = 1 / totalRoutes;
+      setP(base + localP * span);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -17,7 +24,7 @@ export default function ScrollHud() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [routeIndex, totalRoutes]);
 
   // Loss "converges" from ~2.4 toward ~0.02 as you scroll.
   const loss = (2.4 * Math.exp(-3.2 * p) + 0.02).toFixed(3);

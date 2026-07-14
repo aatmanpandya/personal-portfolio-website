@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { profile } from "../content.js";
+import { PAGES } from "../routes.js";
 
-const items = [
-  { id: "journey", label: "Journey" },
-  { id: "projects", label: "Projects" },
-  { id: "skills", label: "Skills" },
-  { id: "contact", label: "Contact" },
-];
+const items = PAGES.filter((p) => p.path !== "/");
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -34,23 +31,27 @@ export default function Nav() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#top" className="group flex items-center gap-2.5">
+        <Link to="/" className="group flex items-center gap-2.5">
           <span className="grid h-8 w-8 place-items-center rounded-md border border-line bg-panel font-mono text-xs text-signal-bright transition-colors group-hover:border-signal">
             {initials}
           </span>
           <span className="hidden font-mono text-sm text-fog sm:inline">
             {profile.name}
           </span>
-        </a>
+        </Link>
         <ul className="flex items-center gap-1 text-sm">
           {items.map((it) => (
-            <li key={it.id}>
-              <a
-                href={`#${it.id}`}
-                className="rounded-md px-3 py-2 text-muted transition-colors hover:bg-panel hover:text-fog"
+            <li key={it.path}>
+              <NavLink
+                to={it.path}
+                className={({ isActive }) =>
+                  `rounded-md px-3 py-2 transition-colors hover:bg-panel hover:text-fog ${
+                    isActive ? "text-signal-bright" : "text-muted"
+                  }`
+                }
               >
-                {it.label}
-              </a>
+                {it.navLabel}
+              </NavLink>
             </li>
           ))}
         </ul>

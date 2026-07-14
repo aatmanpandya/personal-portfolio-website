@@ -2,11 +2,12 @@ import { useState } from "react";
 import { projects } from "../content.js";
 import Reveal from "./Reveal.jsx";
 import LayerTag from "./LayerTag.jsx";
+import LayerNav from "./LayerNav.jsx";
 
 // Hidden layers: each project is a neuron cluster that activates in view.
 export default function Projects() {
   return (
-    <section id="projects" className="relative px-6 py-28">
+    <section className="relative min-h-screen px-6 pb-20 pt-36">
       <div className="mx-auto max-w-6xl">
         <LayerTag index={2} name="activations" />
         <Reveal>
@@ -25,6 +26,7 @@ export default function Projects() {
             </Reveal>
           ))}
         </div>
+        <LayerNav index={2} />
       </div>
     </section>
   );
