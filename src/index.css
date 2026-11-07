@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo";
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+@theme {
+  /* Surfaces */
+  --color-void: #0b0e14;
+  --color-panel: #111623;
+  --color-panel-2: #161c2c;
+
+  /* Ink */
+  --color-ink: #f2f4f8;
+  --color-ink-2: #a8b0bf;
+  --color-ink-3: #6e7787;
+
+  /* Cluster palette — validated (dataviz six checks) on #0b0e14, all-pairs
+     CVD ΔE 23.7. Foundations/Beyond deliberately fold into neutral. */
+  --color-semantic: #3987e5;
+  --color-language: #c98500;
+  --color-predictive: #e66767;
+  --color-production: #d55181;
+  --color-peripheral: #77808f;
+
+  --font-display: "Archivo Variable", sans-serif;
+  --font-sans: "Instrument Sans Variable", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+html {
+  background: var(--color-void);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-semantic) 40%, transparent);
+}
+
+/* Display face: Archivo wide, for cluster names and headings */
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 125;
+  letter-spacing: -0.01em;
+}
+
+/* Utility scrollbar for the reading rail */
+.rail-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.rail-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-panel-2);
+  border-radius: 2px;
+}
