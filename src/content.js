@@ -14,7 +14,7 @@ export const profile = {
   location: "India",
   bio: [
     "I work across the whole agent: memory, RAG, evals, voice calling, and the product around them. I built the first version of ELO end to end at DXFactor, and added speech-to-speech calling to a voice AI platform at Zenalyst.",
-    "This site is built the same way. Every node on this map was embedded with all-MiniLM-L6-v2, the model from my ATS Analyzer, and placed by semantic similarity. Ask it a question and it retrieves.",
+    "This site is built the same way. Every node on this map was embedded with all-MiniLM-L6-v2 and placed by semantic similarity. Ask it a question and it retrieves.",
   ],
   resumeUrl: "/Aatman_Resume.pdf",
   photoUrl: "", // optional — e.g. "/me.jpg" in /public. Leave "" to show a monogram.
@@ -135,21 +135,6 @@ export const projects = [
     links: { repo: "", demo: "" },
   },
   {
-    id: "proj-ats",
-    cluster: "language",
-    name: "AI Resume ATS Analyzer",
-    period: "Jan – Mar 2026",
-    blurb:
-      "Semantic matching of resumes to job descriptions, beyond keyword overlap.",
-    detail: [
-      "Pipeline: PDF parsing, LLM-based extraction, embedding generation, retrieval, scoring and recommendations.",
-      "Matching: Sentence Transformers (all-MiniLM-L6-v2) with cosine similarity for ranking and skill-gap detection.",
-    ],
-    tags: ["Sentence Transformers", "Embeddings", "Semantic Search", "NLP"],
-    highlight: "The model inside this project is the one placing the nodes on this map.",
-    links: { repo: "", demo: "" },
-  },
-  {
     id: "proj-churn",
     cluster: "predictive",
     name: "Subscription Churn in Production",
@@ -182,6 +167,40 @@ export const projects = [
     tags: ["LightGBM", "Calibration", "Log Loss", "Python"],
     highlight: "Logistic regression 0.541, LightGBM 0.546. The baseline won.",
     links: { repo: "https://github.com/aatmanpandya/cricket-win-probability", demo: "" },
+  },
+  {
+    id: "proj-abtest",
+    cluster: "predictive",
+    name: "Faster, Safer A/B Tests",
+    period: "2026",
+    blurb:
+      "CUPED and sequential testing on a real randomised experiment of 64,000 customers, validated with 100,000-trial simulations.",
+    detail: [
+      "Peeking: checking a '5%' test daily for 28 days pushes false positives to 25.8%, about 1 in 4.",
+      "Fix: O'Brien-Fleming boundaries, implemented from scratch, hold false positives at 4.9% and use 27% fewer users on average, for about 2 points of power at the design effect.",
+      "CUPED: it reduced variance by only 0.4% here, and I explain why. Last year's spend barely predicts a two-week outcome. It pays off when the covariate is an earlier measure of the same metric.",
+      "Reproducible: one script regenerates the simulations, the executed notebook and the figures in about 8 minutes.",
+    ],
+    tags: ["Experimentation", "CUPED", "Sequential Testing", "mSPRT", "Statistics"],
+    highlight: "Daily peeking: 25.8% false positives. O'Brien-Fleming: 4.9%.",
+    links: { repo: "https://github.com/aatmanpandya/ab-test-variance-reduction", demo: "" },
+  },
+  {
+    id: "proj-notch",
+    cluster: "production",
+    name: "NotchIsland",
+    period: "2026",
+    blurb:
+      "A Dynamic Island for the MacBook notch: a native macOS app that turns the notch into a live panel.",
+    detail: [
+      "Media: now playing and controls for Apple Music, Spotify and any tab in Chrome, Arc, Edge or Brave.",
+      "Everyday tools: next calendar event with a Join button, meeting reminders, a file shelf with AirDrop, timer, stopwatch and camera mirror.",
+      "Audio: an opt-in live visualizer drives the bars from the actual audio with a Core Audio tap and an FFT. Nothing is recorded.",
+      "Status: prototype, v0.11. Liquid Glass design on macOS 26, with a frosted fallback on macOS 14 and 15.",
+    ],
+    tags: ["Swift", "SwiftUI", "macOS", "Core Audio", "Liquid Glass"],
+    highlight: "Native macOS app, built outside my AI work.",
+    links: { repo: "https://github.com/aatmanpandya/NotchIsland", demo: "" },
   },
 ];
 

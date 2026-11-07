@@ -89,7 +89,7 @@ export const clusterMeta = clusters.map((c) => {
 // Guided-tour stops, in order. Zoom is camera scale at that stop; cx/cy
 // optionally re-center the camera away from the node itself.
 export const tour = [
-  { id: "input", zoom: 0.9, cx: WORLD.w * 0.22, cy: WORLD.h * 0.5 },
+  { id: "input", zoom: 0.9, cx: WORLD.w * 0.22, cy: WORLD.h * 0.45 },
   { id: "exp-dxfactor", zoom: 1.5 },
   { id: "proj-elo-memory", zoom: 1.5 },
   { id: "proj-elo-product", zoom: 1.5 },
@@ -99,7 +99,8 @@ export const tour = [
   { id: "proj-film", zoom: 1.5 },
   { id: "proj-hindsight", zoom: 1.5 },
   { id: "proj-cricket", zoom: 1.5 },
-  { id: "proj-ats", zoom: 1.5 },
+  { id: "proj-abtest", zoom: 1.5 },
+  { id: "proj-notch", zoom: 1.5 },
   { id: "exp-octalsoft", zoom: 1.5 },
   { id: "edu-bits", zoom: 1.35 },
   { id: "output", zoom: 1.3 },

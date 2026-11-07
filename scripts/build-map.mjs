@@ -1,7 +1,6 @@
 // Build-time embedding pipeline.
 //
-// Embeds every map node with all-MiniLM-L6-v2 (the same model used in the
-// AI Resume ATS Analyzer project), projects the vectors to 2D with UMAP,
+// Embeds every map node with all-MiniLM-L6-v2, projects the vectors to 2D with UMAP,
 // and emits src/data/map-data.json consumed by the app. Deterministic:
 // UMAP runs with a seeded PRNG so positions are stable across builds.
 //
@@ -101,20 +100,22 @@ for (const [id, pos] of Object.entries(FIXED)) {
 }
 
 // Relax overlapping points apart (simple repulsion, keeps local structure).
+// Labels are wide, so horizontal gaps count for less than vertical ones.
 const MIN_D = 0.075;
+const X_STRETCH = 1.6;
 for (let iter = 0; iter < 60; iter++) {
   for (let i = 0; i < pts.length; i++) {
     for (let j = i + 1; j < pts.length; j++) {
-      const dx = pts[j][0] - pts[i][0];
+      const dx = (pts[j][0] - pts[i][0]) / X_STRETCH;
       const dy = pts[j][1] - pts[i][1];
       const d = Math.hypot(dx, dy) || 1e-6;
       if (d < MIN_D) {
         const push = (MIN_D - d) / 2;
         const ux = dx / d;
         const uy = dy / d;
-        pts[i][0] -= ux * push;
+        pts[i][0] -= ux * push * X_STRETCH;
         pts[i][1] -= uy * push;
-        pts[j][0] += ux * push;
+        pts[j][0] += ux * push * X_STRETCH;
         pts[j][1] += uy * push;
       }
     }

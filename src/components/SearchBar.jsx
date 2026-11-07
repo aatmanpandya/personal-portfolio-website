@@ -110,7 +110,7 @@ export default function SearchBar({ onResults, onCommit, onClear }) {
       </div>
 
       <p className="mt-1.5 pl-4 font-mono text-[10px] text-ink-3">
-        {modelState === "idle" && "embeds your question with the model from my ATS project"}
+        {modelState === "idle" && "embeds your question with the same model as the map"}
         {modelState === "loading" && `loading ${modelName.split("/")[1]} · ${progress}%`}
         {modelState === "ready" && `${modelName.split("/")[1]} · cosine similarity · live`}
         {modelState === "failed" && "model unavailable — using keyword matching"}
