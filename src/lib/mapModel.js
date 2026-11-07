@@ -10,7 +10,9 @@ import {
   skills,
   education,
   leadership,
+  certifications,
 } from "../content.js";
+import { CLAUDE_HEX } from "../components/ClaudeMark.jsx";
 
 const CLUSTER_COLOR = {
   semantic: "var(--color-semantic)",
@@ -35,6 +37,7 @@ const RADIUS = {
   output: 11,
   project: 15,
   experience: 13,
+  certification: 16,
   skill: 6.5,
   education: 9,
   leadership: 6.5,
@@ -44,7 +47,7 @@ const RADIUS = {
 export const WORLD = { w: 1400, h: 950 };
 
 const detailById = new Map(
-  [...projects, ...experience, ...skills, ...education, ...leadership].map(
+  [...projects, ...experience, ...skills, ...education, ...leadership, ...certifications].map(
     (item) => [item.id, item]
   )
 );
@@ -61,7 +64,7 @@ export const nodes = buildNodes().map((n) => {
     vector: g.vector,
     r: RADIUS[n.kind] ?? 8,
     color: CLUSTER_COLOR[n.cluster],
-    hex: CLUSTER_HEX[n.cluster],
+    hex: n.kind === "certification" ? CLAUDE_HEX : CLUSTER_HEX[n.cluster],
   };
 });
 
@@ -86,13 +89,19 @@ export const clusterMeta = clusters.map((c) => {
 // Guided-tour stops, in order. Zoom is camera scale at that stop; cx/cy
 // optionally re-center the camera away from the node itself.
 export const tour = [
-  { id: "input", zoom: 0.9, cx: WORLD.w * 0.335, cy: WORLD.h * 0.5 },
+  { id: "input", zoom: 0.9, cx: WORLD.w * 0.22, cy: WORLD.h * 0.5 },
+  { id: "exp-dxfactor", zoom: 1.5 },
+  { id: "proj-elo-memory", zoom: 1.5 },
+  { id: "proj-elo-product", zoom: 1.5 },
+  { id: "cert-claude", zoom: 1.5 },
+  { id: "exp-zenalyst", zoom: 1.5 },
+  { id: "proj-churn", zoom: 1.5 },
+  { id: "proj-film", zoom: 1.5 },
+  { id: "proj-hindsight", zoom: 1.5 },
+  { id: "proj-cricket", zoom: 1.5 },
   { id: "proj-ats", zoom: 1.5 },
-  { id: "proj-finbert", zoom: 1.5 },
-  { id: "proj-smartwatch", zoom: 1.5 },
   { id: "exp-octalsoft", zoom: 1.5 },
   { id: "edu-bits", zoom: 1.35 },
-  { id: "lead-traders", zoom: 1.35 },
   { id: "output", zoom: 1.3 },
 ].map((stop) => ({ ...stop, node: nodeById.get(stop.id) }));
 

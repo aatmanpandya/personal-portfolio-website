@@ -184,7 +184,7 @@ export default function App() {
       </div>
 
       {/* Top bar */}
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col items-center gap-3 p-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-start sm:p-5">
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col items-center gap-3 p-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-start sm:p-5">
         <a
           href="#top"
           onClick={(e) => {

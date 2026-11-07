@@ -9,6 +9,7 @@ import {
   skills,
   education,
   leadership,
+  certifications,
 } from "../content.js";
 
 export default function StaticContent() {
@@ -57,6 +58,18 @@ export default function StaticContent() {
           </li>
         ))}
       </ul>
+
+      <h2>Certifications</h2>
+      {certifications.map((c) => (
+        <section key={c.id}>
+          <h3>
+            {c.name}, {c.issuer}
+          </h3>
+          {c.detail.map((d, i) => (
+            <p key={i}>{d}</p>
+          ))}
+        </section>
+      ))}
 
       <h2>Education</h2>
       {education.map((ed) => (

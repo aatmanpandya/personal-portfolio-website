@@ -10,6 +10,7 @@ import {
   skills,
   education,
   leadership,
+  certifications,
 } from "./content.js";
 
 export function buildNodes() {
@@ -57,6 +58,17 @@ export function buildNodes() {
     });
   }
 
+  for (const c of certifications) {
+    nodes.push({
+      id: c.id,
+      kind: "certification",
+      cluster: c.cluster,
+      title: c.name,
+      subtitle: c.issuer,
+      text: `Certification: ${c.name}, from ${c.issuer}. ${c.detail.join(" ")}`,
+    });
+  }
+
   for (const ed of education) {
     nodes.push({
       id: ed.id,
@@ -85,7 +97,7 @@ export function buildNodes() {
     cluster: "beyond",
     title: "Get in touch",
     subtitle: "output layer",
-    text: "Contact Aatman Pandya: email, GitHub, LinkedIn, download resume. Open to AI, machine learning, NLP, and data science roles and collaborations.",
+    text: "Contact Aatman Pandya: email, GitHub, LinkedIn, download resume. Open to AI engineering and software engineering roles from 2027.",
   });
 
   return nodes;

@@ -7,12 +7,13 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { nodes, edges, clusterMeta, WORLD } from "../lib/mapModel.js";
+import ClaudeMark from "./ClaudeMark.jsx";
 
 const SPRING = { stiffness: 60, damping: 18, mass: 1.2 };
 
 // Kinds rendered as filled "anchor" nodes with sans labels; the rest are
 // small stroked satellites with mono labels.
-const ANCHOR = new Set(["input", "output", "project", "experience", "education"]);
+const ANCHOR = new Set(["input", "output", "project", "experience", "education", "certification"]);
 
 export default function MapScene({
   camera, // { x, y, zoom } target in world units
@@ -190,6 +191,7 @@ export default function MapScene({
         {/* Nodes */}
         {nodes.map((n) => {
           const isAnchor = ANCHOR.has(n.kind);
+          const isCert = n.kind === "certification";
           const score = highlights?.get(n.id);
           const isTop = highlights && score === maxScore;
           const dim = highlights && !isTop && score < maxScore * 0.85;
@@ -220,11 +222,12 @@ export default function MapScene({
               )}
               <circle
                 r={n.r}
-                fill={isAnchor ? n.hex : "var(--color-void)"}
+                fill={isAnchor && !isCert ? n.hex : "var(--color-void)"}
                 stroke={n.hex}
-                strokeWidth={isAnchor ? 0 : 1.4}
+                strokeWidth={isAnchor && !isCert ? 0 : 1.4}
                 filter={isAnchor ? "url(#glow)" : undefined}
               />
+              {isCert && <ClaudeMark size={n.r * 1.4} x={-n.r * 0.7} y={-n.r * 0.7} />}
               <text
                 y={n.r + (isAnchor ? 17 : 13)}
                 textAnchor="middle"

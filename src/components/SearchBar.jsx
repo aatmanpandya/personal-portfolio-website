@@ -4,9 +4,9 @@ import { lexicalSearch, loadEmbedder, semanticSearch } from "../lib/search.js";
 import { modelName } from "../lib/mapModel.js";
 
 const PLACEHOLDERS = [
-  "has he shipped semantic search?",
-  "what has he done with transformers?",
-  "any experience with real production data?",
+  "how was the agent memory built?",
+  "any voice AI experience?",
+  "has this shipped to real users?",
   "show me the strongest ML pipeline",
 ];
 

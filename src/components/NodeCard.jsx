@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { profile, links, leadership, clusters } from "../content.js";
+import ClaudeMark from "./ClaudeMark.jsx";
 
 const clusterLabel = (id) => clusters.find((c) => c.id === id)?.label ?? id;
 
@@ -140,6 +141,36 @@ function EducationCard({ node }) {
   );
 }
 
+function CertificationCard({ node }) {
+  const c = node.detail;
+  return (
+    <CardShell node={node} kicker="certification">
+      <div className="mt-3">
+        <ClaudeMark size={36} />
+      </div>
+      <h2 className="display mt-3 text-2xl font-bold leading-tight">{c.name}</h2>
+      <p className="mt-1 font-mono text-xs text-ink-3">
+        {[c.issuer, c.period].filter(Boolean).join(" · ")}
+      </p>
+      {c.detail.map((d, i) => (
+        <p key={i} className="mt-3 text-sm leading-relaxed text-ink-2">
+          {d}
+        </p>
+      ))}
+      {c.credentialUrl && (
+        <a
+          href={c.credentialUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-block text-sm font-medium text-ink underline decoration-white/30 underline-offset-4 hover:decoration-white"
+        >
+          View credential ↗
+        </a>
+      )}
+    </CardShell>
+  );
+}
+
 function LeadershipCard({ node }) {
   // Show both leadership items together — they're one small satellite region.
   return (
@@ -162,7 +193,7 @@ function OutputCard({ node }) {
         Forward my way
       </h2>
       <p className="mt-3 text-sm leading-relaxed text-ink-2">
-        Open to AI/ML and data science roles, internships, and collaborations.
+        Open to AI engineering and software engineering roles from 2027.
       </p>
       <div className="mt-5 flex flex-col gap-2.5 text-sm">
         <a className="text-ink underline decoration-white/30 underline-offset-4 hover:decoration-white" href={`mailto:${links.email}`}>
@@ -187,6 +218,7 @@ const BY_KIND = {
   project: ProjectCard,
   experience: ExperienceCard,
   skill: SkillCard,
+  certification: CertificationCard,
   education: EducationCard,
   leadership: LeadershipCard,
   output: OutputCard,

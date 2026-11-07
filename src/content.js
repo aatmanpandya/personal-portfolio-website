@@ -7,14 +7,14 @@
 
 export const profile = {
   name: "Aatman Pandya",
-  title: "AI/ML Engineer & Data Scientist",
+  title: "AI Engineer",
   // One sharp line. Shows on the Input node and in search placeholders.
   tagline:
-    "I turn messy, unstructured data — resumes, financial news, operational records — into systems that understand it.",
-  location: "Hyderabad, India",
+    "I build memory for AI agents. My work at DXFactor is live with real users: what an agent keeps from every chat, and what reaches the prompt on the next message.",
+  location: "India",
   bio: [
-    "I build ML and NLP systems end to end: semantic search over resumes, transformer-based sentiment signals from financial news, and supervised pipelines that predict real-world outcomes.",
-    "The instinct is always the same — take something unstructured and extract signal from it. This site runs on that instinct: every node on this map was embedded with all-MiniLM-L6-v2, the same model behind my ATS Analyzer, and placed by semantic similarity.",
+    "I work across the whole agent: memory, RAG, evals, voice calling, and the product around them. I built the first version of ELO end to end at DXFactor, and added speech-to-speech calling to a voice AI platform at Zenalyst.",
+    "This site is built the same way. Every node on this map was embedded with all-MiniLM-L6-v2, the model from my ATS Analyzer, and placed by semantic similarity. Ask it a question and it retrieves.",
   ],
   resumeUrl: "/Aatman_Resume.pdf",
   photoUrl: "", // optional — e.g. "/me.jpg" in /public. Leave "" to show a monogram.
@@ -33,23 +33,23 @@ export const links = {
 export const clusters = [
   {
     id: "semantic",
-    label: "Semantic Systems",
-    blurb: "Embeddings, retrieval, and search that understands meaning.",
+    label: "Agent Memory",
+    blurb: "What an agent keeps, and what reaches the prompt.",
   },
   {
     id: "language",
-    label: "Language & Signal",
-    blurb: "Transformers that turn raw text into decision signals.",
+    label: "Retrieval & Search",
+    blurb: "Finding the right thing, across languages and scripts.",
   },
   {
     id: "predictive",
-    label: "Predictive Modeling",
-    blurb: "Supervised pipelines, benchmarked and cross-validated.",
+    label: "Models in Production",
+    blurb: "Trained, monitored, and judged on data they never saw.",
   },
   {
     id: "production",
-    label: "Data in Production",
-    blurb: "Analytics and reporting shipped for real operations.",
+    label: "Shipped Products",
+    blurb: "Voice calls, web apps, and the systems behind them.",
   },
   {
     id: "foundations",
@@ -66,60 +66,156 @@ export const clusters = [
 // ─── Projects ────────────────────────────────────────────────────────────────
 export const projects = [
   {
-    id: "proj-ats",
+    id: "proj-elo-memory",
     cluster: "semantic",
+    name: "ELO Agent Memory",
+    period: "DXFactor · 2026",
+    blurb:
+      "Long-term memory for a conversational AI agent, architected and built from the ground up and live with beta users.",
+    detail: [
+      "Extraction: a background pass pulls facts, people and open conflicts from every chat. Output is schema-enforced, with attribution and durability guards so the model can't store invented facts.",
+      "Layered recall: the chat's person is frozen at chat open so the prompt cache holds. Everything else is ranked by meaning to the current message, within a token budget.",
+      "Reranker: I proposed and built a Voyage reranker to replace a fixed distance cut-off. The right past chat now reaches the prompt on 92% of messages, up from 72%.",
+      "Carry-over: back-reference and time cues let the agent follow a topic across turns, and a working window with a running summary holds the current chat.",
+      "Sensitive facts: marked 'never raise first', so the agent only uses them after the user brings them up.",
+      "Evals: every memory and RAG change runs through suites with test users of up to 240 facts and 120 chats, on the production prompt path, graded by an LLM judge.",
+    ],
+    tags: ["Agent Memory", "RAG", "Reranking", "pgvector", "Voyage", "Evals"],
+    highlight: "Right past chat in the prompt: 72% → 92% of messages.",
+    links: { repo: "", demo: "" },
+  },
+  {
+    id: "proj-elo-product",
+    cluster: "production",
+    name: "ELO Web App & Email Flows",
+    period: "DXFactor · 2026",
+    blurb:
+      "The first version of ELO, built end to end: database, API, workers and the Next.js front end.",
+    detail: [
+      "Backend: FastAPI, Postgres with pgvector, Redis and arq workers, with the agent turn loop running against them.",
+      "Front end: Next.js, React, TypeScript and Tailwind. I rebuilt the app to the product design, with light and dark themes, from signup through to chat.",
+      "Email flows: 6-digit codes for signup, email change and password reset. Codes are stored as HMACs, work once, and sending runs in the background so a slow mail server never holds up a request.",
+      "Privacy: DPDP-compliant erasure with per-user encryption keys, rate limits, and log redaction that keeps user data out of database errors.",
+    ],
+    tags: ["FastAPI", "Next.js", "TypeScript", "Postgres", "Redis", "DPDP"],
+    highlight: "First version built end to end: database to UI.",
+    links: { repo: "", demo: "" },
+  },
+  {
+    id: "proj-hindsight",
+    cluster: "semantic",
+    name: "Hindsight Memory Chatbot",
+    period: "2026",
+    blurb:
+      "A chatbot whose memory persists across sessions and consolidates raw turns into higher-order observations.",
+    detail: [
+      "Chat loop: recall, assemble the prompt, stream the reply, then retain the exchange asynchronously and consolidate on a debounce.",
+      "Built so far: auth, the evolving-memory chat loop, and seeding memory from uploaded chat exports, including WhatsApp.",
+      "Stack: FastAPI, Postgres for app state, Redis and Celery for background jobs, Hindsight as the memory layer.",
+    ],
+    tags: ["Agent Memory", "FastAPI", "Celery", "Redis"],
+    highlight: "Status: chat loop and memory seeding done. Memory graph and eval harness next.",
+    links: { repo: "", demo: "" },
+  },
+  {
+    id: "proj-film",
+    cluster: "language",
+    name: "Multilingual Film Search",
+    period: "2026",
+    blurb:
+      "Search over 9,274 Indian films for English, native-script, Hinglish and misspelt queries.",
+    detail: [
+      "Catalogue: assembled with Wikidata SPARQL and batched Wikipedia plot extraction, then corrected where Wikidata's language field was wrong.",
+      "Test set: 300 graded queries, split into dev and test, written before any search code existed so nothing could be shaped to fit them.",
+      "BM25: field weights, transliteration and phonetic keys raised dev nDCG@10 from 0.47 to 0.78.",
+      "Next: dense and hybrid retrieval are being benchmarked.",
+    ],
+    tags: ["BM25", "Embeddings", "nDCG", "Wikidata", "Python"],
+    highlight: "Dev nDCG@10: 0.47 → 0.78.",
+    links: { repo: "", demo: "" },
+  },
+  {
+    id: "proj-ats",
+    cluster: "language",
     name: "AI Resume ATS Analyzer",
     period: "Jan – Mar 2026",
     blurb:
-      "An AI-powered ATS that semantically matches resumes to job descriptions — beyond keyword overlap.",
+      "Semantic matching of resumes to job descriptions, beyond keyword overlap.",
     detail: [
-      "Modular pipeline covering document ingestion, PDF parsing, resume extraction, embedding generation, semantic retrieval, scoring, and recommendation workflows.",
-      "Sentence Transformers (all-MiniLM-L6-v2) with cosine similarity scoring power semantic resume–job matching, contextual retrieval, and candidate ranking beyond keyword overlap.",
-      "LLM-based information extraction, named entity recognition, fuzzy matching, and structured parsing convert unstructured resumes into comparable candidate profiles.",
-      "Retrieval workflows and recommendation logic use semantic search signals to surface skill gaps and generate targeted optimization suggestions.",
+      "Pipeline: PDF parsing, LLM-based extraction, embedding generation, retrieval, scoring and recommendations.",
+      "Matching: Sentence Transformers (all-MiniLM-L6-v2) with cosine similarity for ranking and skill-gap detection.",
     ],
-    tags: ["Python", "Sentence Transformers", "Embeddings", "Semantic Search", "NLP"],
+    tags: ["Sentence Transformers", "Embeddings", "Semantic Search", "NLP"],
     highlight: "The model inside this project is the one placing the nodes on this map.",
-    links: { repo: "https://github.com/aatmanpandya", demo: "" },
+    links: { repo: "", demo: "" },
   },
   {
-    id: "proj-finbert",
-    cluster: "language",
-    name: "Market Sentiment Analysis with FinBERT",
-    period: "Aug – Oct 2025",
-    blurb:
-      "A FinBERT pipeline that turns 1,400+ financial news articles into tradable sentiment signals.",
-    detail: [
-      "Financial sentiment analysis pipeline using FinBERT over 1,000+ financial news articles, quantifying market sentiment across multiple publicly traded companies.",
-      "Collected and processed ~1,400 articles over a 30-day window, generating sentiment signals for five major technology stocks.",
-      "Correlation analysis between sentiment scores and subsequent stock-price movements surfaced predictive relationships with coefficients as high as 0.63.",
-      "Visualization dashboards and statistical reporting turn unstructured financial news into decision-support insights.",
-    ],
-    tags: ["Python", "FinBERT", "NLP", "Sentiment Analysis", "Statistics"],
-    highlight: "Sentiment ↔ price-movement correlation up to r = 0.63.",
-    links: { repo: "https://github.com/aatmanpandya", demo: "" },
-  },
-  {
-    id: "proj-smartwatch",
+    id: "proj-churn",
     cluster: "predictive",
-    name: "Smartwatch Price Prediction System",
-    period: "Oct – Dec 2025",
+    name: "Subscription Churn in Production",
+    period: "2026",
     blurb:
-      "An end-to-end supervised ML pipeline predicting smartwatch prices from a 201-feature dataset.",
+      "Churn prediction for 993K KKBox subscribers, carried from notebook to a monitored service.",
     detail: [
-      "End-to-end supervised pipeline over 450 smartwatch records: feature engineering, preprocessing, model training, benchmarking, and evaluation.",
-      "Missing-value imputation, IQR-based outlier removal, one-hot encoding, and Min-Max scaling transform raw attributes into a 201-feature training dataset.",
-      "Benchmarked Decision Tree, Random Forest, and XGBoost regressors across multiple evaluation metrics to identify robust pricing models.",
-      "GridSearchCV and K-Fold cross-validation tuning, with R², feature-importance analysis, and interpretability checks for generalization.",
+      "Model: XGBoost over 21.5M transactions and 392M listening-log rows with leak-free cut-offs. ROC-AUC 0.899, and 0.873 on a later out-of-time cohort.",
+      "Incident: the ranking held on the next month but the probabilities did not. Drift monitoring caught 6.5% predicted against 9.0% actual churn.",
+      "Fix: leak-free recalibration took ECE from 0.025 to 0.001, promoted through an MLflow registry.",
+      "Service: batch scoring, a FastAPI API in Docker, and 70 pytest tests.",
     ],
-    tags: ["Python", "Scikit-Learn", "XGBoost", "Random Forest", "GridSearchCV"],
-    highlight: "450 records → 201 engineered features → 3 benchmarked model families.",
-    links: { repo: "https://github.com/aatmanpandya", demo: "" },
+    tags: ["XGBoost", "DuckDB", "MLflow", "FastAPI", "Docker"],
+    highlight: "Calibration gap caught and fixed: ECE 0.025 → 0.001.",
+    links: { repo: "https://github.com/aatmanpandya/music-subscription-churn", demo: "" },
+  },
+  {
+    id: "proj-cricket",
+    cluster: "predictive",
+    name: "IPL Win Probability",
+    period: "2026",
+    blurb:
+      "Ball-by-ball win probability, trained on past seasons and scored on 2025 and 2026.",
+    detail: [
+      "Question: when the model says 70%, do teams win 70% of the time, and does that hold on future seasons?",
+      "Result: the simple baseline won. Logistic regression scored log loss 0.541 against 0.546 for LightGBM, the pre-declared headline model.",
+      "Disclosure: the test seasons were scored across three versions of the pipeline, so the repo states it isn't a perfectly clean holdout.",
+      "Demo: an offline replay of 138 held-out matches with the win-probability line and turning points.",
+    ],
+    tags: ["LightGBM", "Calibration", "Log Loss", "Python"],
+    highlight: "Logistic regression 0.541, LightGBM 0.546. The baseline won.",
+    links: { repo: "https://github.com/aatmanpandya/cricket-win-probability", demo: "" },
   },
 ];
 
 // ─── Experience ──────────────────────────────────────────────────────────────
 export const experience = [
+  {
+    id: "exp-dxfactor",
+    cluster: "semantic",
+    role: "AI Engineering Intern",
+    org: "DXFactor",
+    period: "Jul – Dec 2026 · Ahmedabad",
+    detail: [
+      "ELO is a conversational AI agent for relationship intelligence in health tech, live with beta users.",
+      "Memory: architected and built its long-term memory from the ground up.",
+      "RAG: built retrieval over clinician-approved content packs, with chunked retrieval, ranking and an ingest gate for approved versions.",
+      "Safety: built a classifier that handles romanised-Hindi and code-mixed input.",
+      "Product: built the first version end to end, including the web app and email flows.",
+    ],
+    tags: ["Agent Memory", "RAG", "Evals", "Safety", "FastAPI", "Next.js"],
+  },
+  {
+    id: "exp-zenalyst",
+    cluster: "production",
+    role: "AI Engineering Intern",
+    org: "Zenalyst AI",
+    period: "Summer 2026 · Remote",
+    detail: [
+      "Speech-to-speech: added OpenAI Realtime and Gemini Live calling to a LiveKit Agents platform that previously ran only an STT → LLM → TTS cascade.",
+      "Email agents: built tool-calling agents that send confirmation emails after booking, reschedule and payment calls.",
+      "Reliability: moved the call LLM to Groq with Anthropic fallback.",
+      "Cost: added per-call token accounting and a fuzzy-match response cache.",
+    ],
+    tags: ["Voice AI", "LiveKit", "Tool Calling", "OpenAI Realtime", "Gemini Live", "Groq"],
+  },
   {
     id: "exp-octalsoft",
     cluster: "production",
@@ -127,70 +223,83 @@ export const experience = [
     org: "Octalsoft",
     period: "May – Jul 2024",
     detail: [
-      "Developed Python analytics workflows with Pandas and NumPy to process 1,000+ customer records, account balances, and operational performance indicators.",
-      "Built automated reporting pipelines — data cleaning, validation, exploratory analysis — supporting business monitoring and anomaly detection.",
-      "Generated dashboard-ready insights tracking completion trends, balance irregularities, and key operational metrics.",
-      "Developed Oracle APEX front-end modules for enterprise data-entry, reporting, and operational tracking.",
+      "Built Python reporting pipelines over 1,000+ customer records, with data cleaning, validation and anomaly checks.",
+      "Built Oracle APEX front-end modules for data entry, reporting and operational tracking.",
     ],
-    tags: ["Python", "Pandas", "NumPy", "Oracle APEX", "Reporting"],
+    tags: ["Python", "Pandas", "Oracle APEX", "Reporting"],
+  },
+];
+
+// ─── Certifications ──────────────────────────────────────────────────────────
+export const certifications = [
+  {
+    id: "cert-claude",
+    cluster: "semantic",
+    name: "Claude Certified Developer",
+    issuer: "Anthropic",
+    period: "", // e.g. "2026"
+    detail: [
+      "I build with Claude in production: schema-enforced memory extraction at DXFactor, and the fallback model for voice calls at Zenalyst.",
+    ],
+    credentialUrl: "", // link to the credential; the card shows a button once set
   },
 ];
 
 // ─── Skills (each entry becomes a node near its cluster) ────────────────────
 export const skills = [
   {
-    id: "skill-embeddings",
+    id: "skill-memory",
     cluster: "semantic",
-    name: "Embeddings & Semantic Search",
-    text: "Embedding generation, semantic search, cosine similarity, contextual retrieval, and vector-based ranking with Sentence Transformers.",
+    name: "Agent Memory",
+    text: "Long-term memory for AI agents: extraction, consolidation, layered recall, working memory, and running summaries.",
   },
   {
-    id: "skill-ner",
+    id: "skill-evals",
     cluster: "semantic",
-    name: "NER & Information Extraction",
-    text: "Named entity recognition, LLM-based information extraction, fuzzy matching, and structured parsing of unstructured documents.",
+    name: "LLM Evals",
+    text: "Eval suites that gate memory and RAG changes: test users, regression scenarios, LLM judges, and prompt-cache cost tracking.",
   },
   {
-    id: "skill-nlp-pipelines",
+    id: "skill-rag",
     cluster: "language",
-    name: "NLP Pipelines",
-    text: "End-to-end NLP pipelines: text ingestion, preprocessing, transformer inference, sentiment analysis, and signal generation from raw language.",
+    name: "RAG & Reranking",
+    text: "Retrieval-augmented generation: chunking, ranking, Voyage rerank, pgvector, and ingest gates for approved content.",
+  },
+  {
+    id: "skill-embeddings",
+    cluster: "language",
+    name: "Embeddings & Hybrid Search",
+    text: "Embedding generation, BM25, semantic search, cosine similarity, and nDCG evaluation of retrieval quality.",
   },
   {
     id: "skill-ensembles",
     cluster: "predictive",
-    name: "Ensemble Methods",
-    text: "Random Forest and XGBoost regressors and classifiers, benchmarked across evaluation metrics.",
+    name: "Gradient Boosting",
+    text: "XGBoost and LightGBM models, benchmarked against simple baselines with cross-validation and out-of-time tests.",
   },
   {
-    id: "skill-feature-eng",
+    id: "skill-monitoring",
     cluster: "predictive",
-    name: "Feature Engineering",
-    text: "Imputation, outlier removal, encoding, scaling — turning raw attributes into model-ready features.",
+    name: "Drift & Calibration",
+    text: "Drift monitoring with PSI, calibration checks, recalibration, and MLflow model registries.",
   },
   {
-    id: "skill-model-eval",
-    cluster: "predictive",
-    name: "Tuning & Evaluation",
-    text: "Hyperparameter tuning with GridSearchCV, K-Fold cross-validation, R² evaluation, feature importance, and interpretability checks.",
-  },
-  {
-    id: "skill-python-stack",
+    id: "skill-voice",
     cluster: "production",
-    name: "Python Data Stack",
-    text: "Python with NumPy, Pandas, Scikit-Learn, and Matplotlib for analysis, modeling, and visualization at working scale.",
+    name: "Voice AI",
+    text: "Real-time calling with LiveKit Agents, OpenAI Realtime and Gemini Live, speech-to-speech pipelines, and tool-calling agents.",
   },
   {
-    id: "skill-sql",
+    id: "skill-backend",
     cluster: "production",
-    name: "SQL & Java",
-    text: "SQL for querying and reshaping operational data; Java for object-oriented application development.",
+    name: "Backend",
+    text: "Python, FastAPI, Postgres, Redis, background workers, Docker, and SQL.",
   },
   {
-    id: "skill-tools",
+    id: "skill-frontend",
     cluster: "production",
-    name: "Git & Oracle APEX",
-    text: "Version control with Git and GitHub; enterprise reporting modules with Oracle APEX.",
+    name: "Front End",
+    text: "Next.js, React, TypeScript, and Tailwind for product interfaces.",
   },
 ];
 

@@ -65,7 +65,7 @@ let pts = positions.map((p) => [norm(p[0], minX, maxX), norm(p[1], minY, maxY)])
 // Anchor clusters along a left→right "forward pass" axis so regions are
 // legible, while keeping UMAP's local structure *within* each cluster.
 const ANCHORS = {
-  semantic: [0.24, 0.38],
+  semantic: [0.28, 0.34],
   language: [0.44, 0.64],
   predictive: [0.6, 0.3],
   production: [0.78, 0.6],
@@ -73,7 +73,7 @@ const ANCHORS = {
   beyond: [0.86, 0.16],
 };
 const FIXED = { input: [0.07, 0.5], output: [0.94, 0.48] };
-const CLUSTER_R = 0.085;
+const CLUSTER_R = 0.11;
 
 for (const [clusterId, anchor] of Object.entries(ANCHORS)) {
   const idx = nodes
@@ -101,7 +101,7 @@ for (const [id, pos] of Object.entries(FIXED)) {
 }
 
 // Relax overlapping points apart (simple repulsion, keeps local structure).
-const MIN_D = 0.045;
+const MIN_D = 0.075;
 for (let iter = 0; iter < 60; iter++) {
   for (let i = 0; i < pts.length; i++) {
     for (let j = i + 1; j < pts.length; j++) {
