@@ -64,10 +64,13 @@ export const clusters = [
 ];
 
 // ─── Projects ────────────────────────────────────────────────────────────────
+// `size` sets the circle on the map, from 1 to 5: scope, code, and whether real
+// people use it. Experience entries use the same scale.
 export const projects = [
   {
     id: "proj-elo-memory",
     cluster: "semantic",
+    size: 5,
     name: "ELO Agent Memory",
     period: "DXFactor · 2026",
     blurb:
@@ -75,35 +78,60 @@ export const projects = [
     detail: [
       "Extraction: a background pass pulls facts, people and open conflicts from every chat. Output is schema-enforced, with attribution and durability guards so the model can't store invented facts.",
       "Layered recall: the chat's person is frozen at chat open so the prompt cache holds. Everything else is ranked by meaning to the current message, within a token budget.",
-      "Reranker: I proposed and built a Voyage reranker to replace a fixed distance cut-off. The right past chat now reaches the prompt on 92% of messages, up from 72%.",
+      "Reranker: I proposed and built a Voyage reranker to replace a fixed distance cut-off. The right past chat now reaches the prompt on 96% of messages.",
       "Carry-over: back-reference and time cues let the agent follow a topic across turns, and a working window with a running summary holds the current chat.",
       "Sensitive facts: marked 'never raise first', so the agent only uses them after the user brings them up.",
       "Evals: every memory and RAG change runs through suites with test users of up to 240 facts and 120 chats, on the production prompt path, graded by an LLM judge.",
     ],
     tags: ["Agent Memory", "RAG", "Reranking", "pgvector", "Voyage", "Evals"],
-    highlight: "Right past chat in the prompt: 72% → 92% of messages.",
+    highlight: "Right past chat in the prompt: 96% of messages.",
     links: { repo: "", demo: "" },
   },
   {
-    id: "proj-elo-product",
+    id: "proj-elo-backend",
     cluster: "production",
-    name: "ELO Web App & Email Flows",
+    size: 4,
+    name: "ELO Backend",
     period: "DXFactor · 2026",
     blurb:
-      "The first version of ELO, built end to end: database, API, workers and the Next.js front end.",
+      "The server behind a live AI agent: real-time chat, safety checks, background jobs and encrypted user data.",
     detail: [
-      "Backend: FastAPI, Postgres with pgvector, Redis and arq workers, with the agent turn loop running against them.",
-      "Front end: Next.js, React, TypeScript and Tailwind. I rebuilt the app to the product design, with light and dark themes, from signup through to chat.",
-      "Email flows: 6-digit codes for signup, email change and password reset. Codes are stored as HMACs, work once, and sending runs in the background so a slow mail server never holds up a request.",
-      "Privacy: DPDP-compliant erasure with per-user encryption keys, rate limits, and log redaction that keeps user data out of database errors.",
+      "Turn loop: a WebSocket streams each reply through safety checks, the model gateway and a per-sentence guard, then stores it encrypted.",
+      "Failure handling: if the model gateway fails, the user gets a scripted holding response, never an error screen.",
+      "Model gateway: OpenAI as primary and Anthropic as fallback, behind one interface.",
+      "API contracts: Pydantic models frozen first, so the front end could build against a real-shaped stub server.",
+      "Background jobs: arq workers on Redis run memory consolidation after chats, plus nightly passes.",
+      "Accounts: argon2id passwords, rate limits, and account deletion with a 24-hour restore.",
+      "Email flows: 6-digit codes for signup, email change and password reset. Codes are stored as HMACs and work once, and sending runs in the background so a slow mail server never holds up a request.",
+      "Privacy: DPDP-compliant erasure with per-user encryption keys, and log redaction that keeps user data out of database errors.",
     ],
-    tags: ["FastAPI", "Next.js", "TypeScript", "Postgres", "Redis", "DPDP"],
+    tags: ["FastAPI", "WebSockets", "Postgres", "pgvector", "Redis", "arq", "SQLAlchemy", "DPDP"],
     highlight: "First version built end to end: database to UI.",
+    links: { repo: "", demo: "" },
+  },
+  {
+    id: "proj-elo-frontend",
+    cluster: "production",
+    size: 4,
+    name: "ELO Front End",
+    period: "DXFactor · 2026",
+    blurb:
+      "The Next.js app people actually use: signup, onboarding, live chat, people, reads and profile.",
+    detail: [
+      "Product: rebuilt the app to the product design, with light and dark themes, from signup through to chat.",
+      "Live chat: a WebSocket client and a reducer handle streamed replies, safety interventions and resuming a chat where it stopped.",
+      "Typed contracts: TypeScript types mirror the backend's, and every server message is parsed before the UI uses it.",
+      "Forms: my own DD / MM / YYYY date field and 6-digit code input, plus password rules with a strength bar and show or hide buttons.",
+      "Testing: component and reducer tests with Vitest and Testing Library.",
+    ],
+    tags: ["Next.js", "React", "TypeScript", "Tailwind", "WebSockets", "Vitest"],
+    highlight: "Signup to live streamed chat, in one typed client.",
     links: { repo: "", demo: "" },
   },
   {
     id: "proj-hindsight",
     cluster: "semantic",
+    size: 2,
     name: "Hindsight Memory Chatbot",
     period: "2026",
     blurb:
@@ -120,6 +148,7 @@ export const projects = [
   {
     id: "proj-film",
     cluster: "language",
+    size: 2,
     name: "Multilingual Film Search",
     period: "2026",
     blurb:
@@ -137,6 +166,7 @@ export const projects = [
   {
     id: "proj-churn",
     cluster: "predictive",
+    size: 3,
     name: "Subscription Churn in Production",
     period: "2026",
     blurb:
@@ -154,6 +184,7 @@ export const projects = [
   {
     id: "proj-cricket",
     cluster: "predictive",
+    size: 2,
     name: "IPL Win Probability",
     period: "2026",
     blurb:
@@ -171,6 +202,7 @@ export const projects = [
   {
     id: "proj-abtest",
     cluster: "predictive",
+    size: 2,
     name: "Faster, Safer A/B Tests",
     period: "2026",
     blurb:
@@ -188,6 +220,7 @@ export const projects = [
   {
     id: "proj-notch",
     cluster: "production",
+    size: 3,
     name: "NotchIsland",
     period: "2026",
     blurb:
@@ -209,6 +242,7 @@ export const experience = [
   {
     id: "exp-dxfactor",
     cluster: "semantic",
+    size: 5,
     role: "AI Engineering Intern",
     org: "DXFactor",
     period: "Jul – Dec 2026 · Ahmedabad",
@@ -224,6 +258,7 @@ export const experience = [
   {
     id: "exp-zenalyst",
     cluster: "production",
+    size: 4,
     role: "AI Engineering Intern",
     org: "Zenalyst AI",
     period: "Summer 2026 · Remote",
@@ -238,6 +273,7 @@ export const experience = [
   {
     id: "exp-octalsoft",
     cluster: "production",
+    size: 1,
     role: "Data Analytics Intern",
     org: "Octalsoft",
     period: "May – Jul 2024",
@@ -254,9 +290,9 @@ export const certifications = [
   {
     id: "cert-claude",
     cluster: "semantic",
-    name: "Claude Certified Developer",
+    name: "Claude Certified Developer – Foundations",
     issuer: "Anthropic",
-    period: "", // e.g. "2026"
+    period: "CCDV-F · 970/1000",
     detail: [
       "I build with Claude in production: schema-enforced memory extraction at DXFactor, and the fallback model for voice calls at Zenalyst.",
     ],
@@ -312,13 +348,13 @@ export const skills = [
     id: "skill-backend",
     cluster: "production",
     name: "Backend",
-    text: "Python, FastAPI, Postgres, Redis, background workers, Docker, and SQL.",
+    text: "Python and FastAPI services with WebSockets, async SQLAlchemy, Postgres with pgvector, Redis, arq and Celery workers, Docker, and SQL. Built ELO's real-time turn loop and account flows, and a scoring API for churn.",
   },
   {
     id: "skill-frontend",
     cluster: "production",
     name: "Front End",
-    text: "Next.js, React, TypeScript, and Tailwind for product interfaces.",
+    text: "Next.js, React, TypeScript and Tailwind for product interfaces, with Vitest and Testing Library. Built ELO's web app, and this site's interactive map with SVG and Framer Motion.",
   },
 ];
 

@@ -39,11 +39,9 @@ export default function MapScene({
     }
   }, [camera, reduced, sx, sy, sz]);
 
-  const nx = useTransform(sx, (v) => -v);
-  const ny = useTransform(sy, (v) => -v);
-  const transform = useMotionTemplate`translate(${WORLD.w / 2}px, ${
-    WORLD.h / 2
-  }px) scale(${sz}) translate(${nx}px, ${ny}px)`;
+  const nx = useTransform(sx, (v) => WORLD.w / 2 - v);
+  const ny = useTransform(sy, (v) => WORLD.h / 2 - v);
+  const transform = useMotionTemplate`scale(${sz}) translate(${nx}px, ${ny}px)`;
 
   // Drag to pan / wheel to zoom → hands control to the visitor.
   const svgRef = useRef(null);
@@ -103,7 +101,9 @@ export default function MapScene({
         </filter>
       </defs>
 
-      <motion.g style={{ transform }}>
+      {/* Framer sets the origin to 50% 50%; view-box makes that the map's
+          centre, which is what the camera transform above scales around. */}
+      <motion.g style={{ transform, transformBox: "view-box" }}>
         {/* Ambient cluster fields */}
         {clusterMeta.map((c) => (
           <circle

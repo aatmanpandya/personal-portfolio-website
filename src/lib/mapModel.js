@@ -43,6 +43,9 @@ const RADIUS = {
   leadership: 6.5,
 };
 
+// Projects and experience scale with their `size` in content.js.
+const SIZE_RADIUS = { 1: 10, 2: 13, 3: 17, 4: 22, 5: 28 };
+
 // World-space size of the map (SVG viewBox units).
 export const WORLD = { w: 1400, h: 950 };
 
@@ -62,7 +65,7 @@ export const nodes = buildNodes().map((n) => {
     x: g.x * WORLD.w,
     y: g.y * WORLD.h,
     vector: g.vector,
-    r: RADIUS[n.kind] ?? 8,
+    r: SIZE_RADIUS[n.size] ?? RADIUS[n.kind] ?? 8,
     color: CLUSTER_COLOR[n.cluster],
     hex: n.kind === "certification" ? CLAUDE_HEX : CLUSTER_HEX[n.cluster],
   };
@@ -89,10 +92,11 @@ export const clusterMeta = clusters.map((c) => {
 // Guided-tour stops, in order. Zoom is camera scale at that stop; cx/cy
 // optionally re-center the camera away from the node itself.
 export const tour = [
-  { id: "input", zoom: 0.9, cx: WORLD.w * 0.22, cy: WORLD.h * 0.45 },
+  { id: "input", zoom: 0.9, cx: WORLD.w * 0.15, cy: WORLD.h * 0.42 },
   { id: "exp-dxfactor", zoom: 1.5 },
   { id: "proj-elo-memory", zoom: 1.5 },
-  { id: "proj-elo-product", zoom: 1.5 },
+  { id: "proj-elo-backend", zoom: 1.5 },
+  { id: "proj-elo-frontend", zoom: 1.5 },
   { id: "cert-claude", zoom: 1.5 },
   { id: "exp-zenalyst", zoom: 1.5 },
   { id: "proj-churn", zoom: 1.5 },
